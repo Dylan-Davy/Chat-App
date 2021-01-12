@@ -59,6 +59,8 @@ class MainWindow(qtw.QMainWindow):
         if list[0] == self.message_partner or list[1] == self.message_partner:
             self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
         else:
+            new_chat_boolean = True
+
             for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
                 chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
 
@@ -66,6 +68,13 @@ class MainWindow(qtw.QMainWindow):
                     chat.ui.LastMessage.setText(list[2])
                     self.ui.HomeScrollVbox.removeWidget(chat)
                     self.ui.HomeScrollVbox.insertWidget(0, chat)
+
+                    new_chat_boolean = False
+                
+            if new_chat_boolean:
+                chat = ChatItem([list[0], list[2]])
+                self.ui.HomeScrollVbox.insertWidget(0, chat)
+                chat.clicked_signal.connect(self.chat)
 
     def home(self, list):
         self.ui.textEdit.setText("")
@@ -136,7 +145,9 @@ class MainWindow(qtw.QMainWindow):
                 if message[0] == self.username:
                     own_message = True
 
-                self.ui.ChatScrollVbox.addWidget(ChatMessage(own_message, message[2], message[3]))
+                chat = ChatMessage(own_message, message[2], message[3])
+                self.ui.ChatScrollVbox.addWidget(chat)
+                self.ui.ChatScrollVbox.setAlignment(chat, qtc.Qt.AlignTop)
 
         for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
             self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
