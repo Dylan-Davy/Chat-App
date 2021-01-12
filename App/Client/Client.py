@@ -49,11 +49,13 @@ class Client(qtc.QObject):
             w.home([])
 
     def loginOutcome(self, login_outcome, list):
-        w.statusBar().showMessage(login_outcome)
         if login_outcome == "Logged in":
             self.username = w.ui.UsernameEntry.text()
+            w.statusBar().showMessage(self.username + ": " + login_outcome)
             w.username = w.ui.UsernameEntry.text()
             w.home(list)
+        else:
+            w.statusBar().showMessage(login_outcome)
 
     def sendMessage(self):
         if not w.ui.textEdit.toPlainText() == "":
@@ -100,10 +102,10 @@ class Client(qtc.QObject):
 
     def addContactOutcome(self, add_contact_success):
         if add_contact_success:
-            w.statusBar().showMessage(w.ui.newMessageText.text() + " added as a new contact")
+            w.statusBar().showMessage(self.username + ": " + w.ui.newMessageText.text() + " added as a new contact")
             w.chat(w.ui.newMessageText.text())
         else:
-            w.statusBar().showMessage("This contact does not exist")
+            w.statusBar().showMessage(self.username + ": " + "This contact does not exist")
 
     def login(self):
         self.login_signal.emit(w.ui.UsernameEntry.text(), w.ui.PasswordEntry.text(), 0)
@@ -116,9 +118,6 @@ class Client(qtc.QObject):
         self.username = ""
         w.logout()
         w.statusBar().showMessage("Logged out")
-    
-    def chat(self):
-        w.chat()
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
