@@ -22,6 +22,11 @@ class MainWindow(qtw.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(0)
         self.statusBar().showMessage("Logged out")
 
+    def login(self):
+        self.statusBar().showMessage(f"Attempting to login as {self.ui.UsernameEntry.text()}...")
+        self.ui.LoginButton.setEnabled(False)
+        self.ui.RegisterButton.setEnabled(False)
+
     def loginOutcome(self, login_outcome, list):
         if login_outcome == "Logged in":
             self.username = self.ui.UsernameEntry.text()
@@ -29,6 +34,14 @@ class MainWindow(qtw.QMainWindow):
             self.home(list)
         else:
             self.statusBar().showMessage(login_outcome)
+        
+        self.ui.LoginButton.setEnabled(True)
+        self.ui.RegisterButton.setEnabled(True)
+
+    def connectionFailed(self, message):
+        self.statusBar().showMessage(message)
+        self.ui.LoginButton.setEnabled(True)
+        self.ui.RegisterButton.setEnabled(True)
 
     def sendMessage(self, message, time):
         self.ui.ChatScrollVbox.addWidget(ChatMessage(True, message, time))

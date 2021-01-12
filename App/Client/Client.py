@@ -27,6 +27,7 @@ class Client(qtc.QObject):
         self.socket.register_outcome.connect(self.registerOutcome)
         self.socket.add_contact_outcome.connect(self.addContactOutcome)
         self.socket.recieved_message.connect(self.recieveMessage)
+        self.socket.server_connection_failed.connect(self.connectionFailed)
 
         self.send_message.connect(self.socket.sendMessage)
         self.login_signal.connect(self.socket.login)
@@ -81,15 +82,20 @@ class Client(qtc.QObject):
 
     def login(self):
         self.login_signal.emit(w.ui.UsernameEntry.text(), w.ui.PasswordEntry.text(), 0)
+        w.login()
 
     def register(self):
         self.register_signal.emit(w.ui.UsernameEntry.text(), w.ui.PasswordEntry.text(), 1)
+        self.statusBar().showMessage(f"Attempting to register as {self.ui.UsernameEntry.text()}")
 
     def logout(self):
         self.logout_signal.emit()
         self.username = ""
         w.logout()
         w.statusBar().showMessage("Logged out")
+    
+    def connectionFailed(self, message):
+        w.connectionFailed(message)
 
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)

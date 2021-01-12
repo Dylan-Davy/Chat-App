@@ -12,6 +12,7 @@ class ClientSocket(qtc.QObject):
     register_outcome = qtc.pyqtSignal(str)
     add_contact_outcome = qtc.pyqtSignal(bool)
     recieved_message = qtc.pyqtSignal(list)
+    server_connection_failed = qtc.pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -35,6 +36,9 @@ class ClientSocket(qtc.QObject):
 
             self.socket.readyRead.connect(self.processDatastream)
             self.socket.connected.connect(self.sendLoginDetails)
+
+        if not self.socket.waitForConnected(5000):
+            self.server_connection_failed.emit("Server connection timed out. Please check your internet and the server status.")
 
     def sendLoginDetails(self):
         request = qtc.QByteArray()
