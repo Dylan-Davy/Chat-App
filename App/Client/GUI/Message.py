@@ -14,12 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_message(object):
     def setupUi(self, message):
         message.setObjectName("message")
-        message.resize(200, 58)
+        message.resize(200, 150)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(message.sizePolicy().hasHeightForWidth())
         message.setSizePolicy(sizePolicy)
+        message.setMaximumSize(QtCore.QSize(16777215, 150))
         self.gridLayout = QtWidgets.QGridLayout(message)
         self.gridLayout.setObjectName("gridLayout")
         self.time = QtWidgets.QLabel(message)

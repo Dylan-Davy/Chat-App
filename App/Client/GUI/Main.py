@@ -60,9 +60,12 @@ class MainWindow(qtw.QMainWindow):
             self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
         else:
             for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
-                self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
-            
-            self.home([])
+                chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
+
+                if chat.ui.Name.text() == list[0]:
+                    chat.ui.LastMessage.setText(list[2])
+                    self.ui.HomeScrollVbox.removeWidget(chat)
+                    self.ui.HomeScrollVbox.insertWidget(0, chat)
 
     def home(self, list):
         self.ui.textEdit.setText("")
