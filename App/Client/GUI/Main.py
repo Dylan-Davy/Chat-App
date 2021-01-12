@@ -53,14 +53,11 @@ class MainWindow(qtw.QMainWindow):
 
         self.message_list.append([self.username, self.message_partner, message, time])
 
-        self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
-
     def recieveMessage(self, list):
         self.message_list.append([list[0], list[1], list[2], list[3]])
 
         if list[0] == self.message_partner or list[1] == self.message_partner:
             self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
-            self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
         else:
             for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
                 self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
@@ -142,10 +139,6 @@ class MainWindow(qtw.QMainWindow):
             self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
 
         self.ui.stackedWidget.setCurrentIndex(2)
-
-        qtw.QApplication.processEvents(qtc.QEventLoop.AllEvents)
-
-        self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
 
 class ChatItem(qtw.QWidget):
     clicked_signal = qtc.pyqtSignal(str)

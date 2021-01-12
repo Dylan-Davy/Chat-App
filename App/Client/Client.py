@@ -40,6 +40,7 @@ class Client(qtc.QObject):
         w.ui.newMessageButton.clicked.connect(self.addContact)
         w.ui.actionBack.triggered.connect(self.backButton)
         w.ui.sendButton.clicked.connect(self.sendMessage)
+        w.ui.ChatScroll.verticalScrollBar().rangeChanged.connect(lambda : w.ui.ChatScroll.verticalScrollBar().setValue(w.ui.ChatScroll.verticalScrollBar().maximum()))
 
     def backButton(self):
         if w.ui.stackedWidget.currentIndex() == 0:
