@@ -45,7 +45,6 @@ class MainWindow(qtw.QMainWindow):
 
     def sendMessage(self, message, time):
         self.ui.ChatScrollVbox.addWidget(ChatMessage(True, message, time))
-        self.partner_list[self.message_partner] = message
         self.ui.textEdit.setText("")
 
         self.message_list.append([self.username, self.message_partner, message, time])
@@ -59,33 +58,33 @@ class MainWindow(qtw.QMainWindow):
             self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
             self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
         else:
-            new_chat_bool = True
+            for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
+                self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
 
-            if self.ui.stackedWidget.currentIndex() == 1:
-                for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
-                    chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
+            self.ui.HomeScrollVbox.deleteLater()
 
-                    if chat.ui.Name.text() == list[0]:
-                        chat.ui.LastMessage.setText(list[2])
-                        new_chat_bool = False
+            self.home([])
             
-                if new_chat_bool:
-                    widget = ChatItem([list[0], list[2]])
-                    widget.clicked_signal.connect(self.chat)
-                    self.ui.HomeScrollVbox.addWidget(widget)
+    def createPartnerList(self):
+        self.partner_list = {}
 
-        self.partner_list[list[0]] = list[2]
+        for item in reversed(self.message_list):
+                if not self.username == item[0]:
+                    if not item[0] in self.partner_list.keys():
+                        self.partner_list[item[0]] = item[2]
+                else:
+                    if not item[1] in self.partner_list.keys():
+                        self.partner_list[item[1]] = item[2]
 
     def home(self, list):
+        self.ui.textEdit.setText("")
+        
         if not len(list) == 0:
             for item in list:
                 x = item.split(":;:")
                 self.message_list.append(x)
 
-                if not self.username == x[0]:
-                    self.partner_list[x[0]] = x[2]
-                else:
-                    self.partner_list[x[1]] = x[2]
+        self.createPartnerList()
 
         if self.ui.stackedWidget.currentIndex() == 2:
             for widget in reversed(range(self.ui.ChatScrollVbox.count())): 
