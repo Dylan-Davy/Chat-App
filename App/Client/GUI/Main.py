@@ -49,7 +49,7 @@ class MainWindow(qtw.QMainWindow):
         self.ui.textEdit.setText("")
 
         self.message_list.append([self.username, self.message_partner, message, time])
-
+        
         self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
 
     def recieveMessage(self, list):
@@ -125,7 +125,7 @@ class MainWindow(qtw.QMainWindow):
         
         self.ui.HomeScrollVbox.deleteLater()
 
-    def chat(self, id):        
+    def chat(self, id):   
         self.ui.newMessageText.setText("")
 
         self.message_partner = id
@@ -149,9 +149,10 @@ class MainWindow(qtw.QMainWindow):
 
         self.ui.HomeScrollVbox.deleteLater()
 
+        self.ui.stackedWidget.setCurrentIndex(2)
+
         self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
         
-        self.ui.stackedWidget.setCurrentIndex(2)
 
 class ChatItem(qtw.QWidget):
     clicked_signal = qtc.pyqtSignal(str)
