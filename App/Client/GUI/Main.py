@@ -22,6 +22,47 @@ class MainWindow(qtw.QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(0)
         self.statusBar().showMessage("Logged out")
 
+    def loginOutcome(self, login_outcome, list):
+        if login_outcome == "Logged in":
+            self.username = self.ui.UsernameEntry.text()
+            self.statusBar().showMessage(self.username + ": " + login_outcome)
+            self.home(list)
+        else:
+            self.statusBar().showMessage(login_outcome)
+
+    def sendMessage(self, message, time):
+        self.ui.ChatScrollVbox.addWidget(ChatMessage(True, message, time))
+        self.partner_list[self.message_partner] = message
+        self.ui.textEdit.setText("")
+
+        self.message_list.append([self.username, self.message_partner, message, time])
+
+        self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
+
+    def recieveMessage(self, list):
+        self.message_list.append([list[0], list[1], list[2], list[3]])
+
+        if list[0] == self.message_partner or list[1] == self.message_partner:
+            self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
+            self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
+        else:
+            new_chat_bool = True
+
+            if self.ui.stackedWidget.currentIndex() == 1:
+                for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
+                    chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
+
+                    if chat.ui.Name.text() == list[0]:
+                        chat.ui.LastMessage.setText(list[2])
+                        new_chat_bool = False
+            
+                if new_chat_bool:
+                    widget = ChatItem([list[0], list[2]])
+                    widget.clicked_signal.connect(self.chat)
+                    self.ui.HomeScrollVbox.addWidget(widget)
+
+        self.partner_list[list[0]] = list[2]
+
     def home(self, list):
         if not len(list) == 0:
             for item in list:
@@ -57,6 +98,8 @@ class MainWindow(qtw.QMainWindow):
 
     def logout(self):
         self.ui.stackedWidget.setCurrentIndex(0)
+
+        self.username = ""
 
         for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
             self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)

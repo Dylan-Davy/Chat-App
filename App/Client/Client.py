@@ -51,47 +51,19 @@ class Client(qtc.QObject):
     def loginOutcome(self, login_outcome, list):
         if login_outcome == "Logged in":
             self.username = w.ui.UsernameEntry.text()
-            w.statusBar().showMessage(self.username + ": " + login_outcome)
-            w.username = w.ui.UsernameEntry.text()
-            w.home(list)
-        else:
-            w.statusBar().showMessage(login_outcome)
+        
+        w.loginOutcome(login_outcome, list)
 
     def sendMessage(self):
         if not w.ui.textEdit.toPlainText() == "":
             message = w.ui.textEdit.toPlainText()
-            w.ui.ChatScrollVbox.addWidget(ChatMessage(True, message, str(datetime.now())))
-            self.send_message.emit(self.username, w.message_partner, message, str(datetime.now()))
-            w.partner_list[w.message_partner] = message
-            w.ui.textEdit.setText("")
-
-            w.message_list.append([self.username, w.message_partner, message, str(datetime.now())])
-
-            w.ui.ChatScroll.verticalScrollBar().setValue(w.ui.ChatScroll.verticalScrollBar().maximum())
+            time = str(datetime.now())
+            self.send_message.emit(self.username, w.message_partner, message, time)
+            
+            w.sendMessage(message, time)
 
     def recieveMessage(self, list):
-        w.message_list.append([list[0], list[1], list[2], list[3]])
-
-        if list[0] == w.message_partner or list[1] == w.message_partner:
-            w.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
-            w.ui.ChatScroll.verticalScrollBar().setValue(w.ui.ChatScroll.verticalScrollBar().maximum())
-        else:
-            new_chat_bool = True
-
-            if w.ui.stackedWidget.currentIndex() == 1:
-                for widget in reversed(range(w.ui.HomeScrollVbox.count())): 
-                    chat = w.ui.HomeScrollVbox.itemAt(widget).widget()
-
-                    if chat.ui.Name.text() == list[0]:
-                        chat.ui.LastMessage.setText(list[2])
-                        new_chat_bool = False
-            
-                if new_chat_bool:
-                    widget = ChatItem([list[0], list[2]])
-                    widget.clicked_signal.connect(w.chat)
-                    w.ui.HomeScrollVbox.addWidget(widget)
-
-        w.partner_list[list[0]] = list[2]
+        w.recieveMessage(list)
 
     def registerOutcome(self, register_outcome):
         w.statusBar().showMessage(register_outcome)
