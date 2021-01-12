@@ -15,7 +15,6 @@ class MainWindow(qtw.QMainWindow):
         super().__init__(*args, **kwargs)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
         style_file = qss
         self.ui.centralwidget.setStyleSheet(style_file)
 
@@ -31,6 +30,11 @@ class MainWindow(qtw.QMainWindow):
         if login_outcome == "Logged in":
             self.username = self.ui.UsernameEntry.text()
             self.statusBar().showMessage(self.username + ": " + login_outcome)
+
+            self.ui.HomeScrollVbox = qtw.QVBoxLayout()
+            self.ui.HomeScrollVbox.setAlignment(qtc.Qt.AlignTop)
+            self.ui.HomeScrollWidget.setLayout(self.ui.HomeScrollVbox)
+
             self.home(list)
         else:
             self.statusBar().showMessage(login_outcome)
@@ -48,7 +52,7 @@ class MainWindow(qtw.QMainWindow):
         self.ui.textEdit.setText("")
 
         self.message_list.append([self.username, self.message_partner, message, time])
-        
+
         self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
 
     def recieveMessage(self, list):
@@ -60,12 +64,17 @@ class MainWindow(qtw.QMainWindow):
         else:
             for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
                 self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
-
-            self.ui.HomeScrollVbox.deleteLater()
-
-            self.home([])
             
-    def createPartnerList(self):
+            self.home([])
+
+    def home(self, list):
+        self.ui.textEdit.setText("")
+        
+        if not len(list) == 0:
+            for item in list:
+                x = item.split(":;:")
+                self.message_list.append(x)
+
         self.partner_list = {}
 
         for item in reversed(self.message_list):
@@ -76,25 +85,11 @@ class MainWindow(qtw.QMainWindow):
                     if not item[1] in self.partner_list.keys():
                         self.partner_list[item[1]] = item[2]
 
-    def home(self, list):
-        self.ui.textEdit.setText("")
-        
-        if not len(list) == 0:
-            for item in list:
-                x = item.split(":;:")
-                self.message_list.append(x)
-
-        self.createPartnerList()
-
         if self.ui.stackedWidget.currentIndex() == 2:
             for widget in reversed(range(self.ui.ChatScrollVbox.count())): 
                 self.ui.ChatScrollVbox.itemAt(widget).widget().setParent(None)
 
             self.ui.ChatScrollVbox.deleteLater()
-
-        self.ui.HomeScrollVbox = qtw.QVBoxLayout()
-        self.ui.HomeScrollVbox.setAlignment(qtc.Qt.AlignTop)
-        self.ui.HomeScrollWidget.setLayout(self.ui.HomeScrollVbox)
 
         if len(self.partner_list) > 0:
             for item in self.partner_list.items():
@@ -146,12 +141,11 @@ class MainWindow(qtw.QMainWindow):
         for widget in reversed(range(self.ui.HomeScrollVbox.count())): 
             self.ui.HomeScrollVbox.itemAt(widget).widget().setParent(None)
 
-        self.ui.HomeScrollVbox.deleteLater()
-
         self.ui.stackedWidget.setCurrentIndex(2)
 
+        qtw.QApplication.processEvents(qtc.QEventLoop.AllEvents)
+
         self.ui.ChatScroll.verticalScrollBar().setValue(self.ui.ChatScroll.verticalScrollBar().maximum())
-        
 
 class ChatItem(qtw.QWidget):
     clicked_signal = qtc.pyqtSignal(str)
