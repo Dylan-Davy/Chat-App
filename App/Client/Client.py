@@ -35,6 +35,7 @@ class Client(qtc.QObject):
         self.register_signal.connect(self.socket.login)
         self.logout_signal.connect(self.socket.disconnect)
         self.add_contact.connect(self.socket.addContact)
+        self.send_image.connect(self.socket.sendImage)
         
         w.ui.LoginButton.clicked.connect(self.login)
         w.ui.RegisterButton.clicked.connect(self.register)

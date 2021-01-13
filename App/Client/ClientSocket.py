@@ -67,6 +67,25 @@ class ClientSocket(qtc.QObject):
         stream.writeQString(new_contact)
         self.socket.write(request)
         self.socket.flush()
+    
+    def sendImage(self, sender, reciever, image, time):
+        image_array = qtc.QByteArray()
+        buffer = qtc.QBuffer(image_array)
+        buffer.open(qtc.QIODevice.WriteOnly)
+        image.save(buffer, "JPG", quality=100)
+
+        request = qtc.QByteArray()
+        stream = qtc.QDataStream(request, qtc.QIODevice.WriteOnly)
+        stream.writeInt(4)
+        stream.writeInt(image_array.size())
+        stream.writeQString(sender)
+        stream.writeQString(reciever)
+        stream.writeQString(time)
+
+        self.socket.write(request)
+        self.socket.flush()
+        self.socket.write(image_array)
+        self.socket.flush()
 
     def processDatastream(self):
         stream = qtc.QDataStream(self.socket)

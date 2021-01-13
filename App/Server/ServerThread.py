@@ -9,6 +9,8 @@ import psycopg2
 class ServerThread(qtc.QThread):
     client_disconnected = qtc.pyqtSignal(qtc.QObject)
     message_recieved = qtc.pyqtSignal(list)
+    processing = False
+    image = qtc.QByteArray()
 
     def __init__(self, descriptor):
         super().__init__()
@@ -34,8 +36,12 @@ class ServerThread(qtc.QThread):
         self.exec()
 
     def processDatastream(self):
-        stream = qtc.QDataStream(self.connection)
-        case = stream.readInt()
+        case = -1
+        stream = -1
+
+        if not self.processing:
+            stream = qtc.QDataStream(self.connection)
+            case = stream.readInt()
         
         if case == 0:
             username = stream.readQString()
@@ -117,6 +123,24 @@ class ServerThread(qtc.QThread):
             
             self.connection.write(request)
 
+        elif case == 4:
+            self.image_size = stream.readInt()
+            self.image_sender = stream.readQString()
+            self.image_reciever = stream.readQString()
+            self.image_time = stream.readQString()
+            self.processing = True
+
+        else:
+            self.image.append(self.connection.readAll())
+            
+            if self.image.size() == self.image_size:
+                my_image = qtg.QImage()
+
+                self.image_sender = ""
+                self.image_reciever = ""
+                self.image_time = ""
+                self.processing = False
+
         self.database.commit()
         self.connection.flush()
 
@@ -129,6 +153,9 @@ class ServerThread(qtc.QThread):
 
             self.connection.write(request)
             self.connection.flush()
+
+    def sendImage(self):
+        pass
 
     def disconnect(self):
         self.username = ""
