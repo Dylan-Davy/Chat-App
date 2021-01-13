@@ -9,12 +9,15 @@ import psycopg2
 class ServerThread(qtc.QThread):
     client_disconnected = qtc.pyqtSignal(qtc.QObject)
     message_recieved = qtc.pyqtSignal(list)
+    image_recieved = qtc.pyqtSignal(list)
 
     def __init__(self, descriptor):
         super().__init__()
         self.descriptor = descriptor
 
     def run(self):
+        self.processing = False
+        self.image = qtc.QByteArray()
         self.connection = qtn.QTcpSocket()
         self.connection.setSocketDescriptor(self.descriptor)
 
@@ -34,8 +37,12 @@ class ServerThread(qtc.QThread):
         self.exec()
 
     def processDatastream(self):
-        stream = qtc.QDataStream(self.connection)
-        case = stream.readInt()
+        case = -1
+        stream = -1
+
+        if not self.processing:
+            stream = qtc.QDataStream(self.connection)
+            case = stream.readInt()
         
         if case == 0:
             username = stream.readQString()
@@ -117,6 +124,25 @@ class ServerThread(qtc.QThread):
             
             self.connection.write(request)
 
+        elif case == 4:
+            self.processing = True
+            self.image_size = stream.readInt()
+            self.image_sender = stream.readQString()
+            self.image_reciever = stream.readQString()
+            self.image_time = stream.readQString()
+
+        else:
+            self.image.append(self.connection.readAll())
+
+            if self.image.size() == self.image_size:
+                self.image_recieved.emit([self.image_sender, self.image_reciever, self.image, self.image_time])
+                self.image_sender = ""
+                self.image_reciever = ""
+                self.image_time = ""
+                self.image_size = 0
+                self.image = qtc.QByteArray()
+                self.processing = False
+
         self.database.commit()
         self.connection.flush()
 
@@ -129,6 +155,22 @@ class ServerThread(qtc.QThread):
 
             self.connection.write(request)
             self.connection.flush()
+
+    def sendImage(self, list):
+        if self.username == list[1]:
+            request = qtc.QByteArray()
+            stream = qtc.QDataStream(request, qtc.QIODevice.WriteOnly)
+            stream.writeInt(4)
+            stream.writeInt(list[2].size())
+            stream.writeQString(list[0])
+            stream.writeQString(list[1])
+            stream.writeQString(list[3])
+
+            self.connection.write(request)
+            self.connection.flush()
+            self.connection.write(list[2])
+            self.connection.flush()
+            print("image sent")
 
     def disconnect(self):
         self.username = ""

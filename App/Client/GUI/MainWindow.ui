@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>828</width>
-    <height>591</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="LoginScreen">
        <property name="sizePolicy">
@@ -95,7 +95,23 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="UsernameEntry"/>
+              <widget class="QLineEdit" name="UsernameEntry">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -118,6 +134,18 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
                </property>
                <property name="echoMode">
                 <enum>QLineEdit::Password</enum>
@@ -203,7 +231,7 @@
              <x>0</x>
              <y>0</y>
              <width>790</width>
-             <height>477</height>
+             <height>484</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -243,11 +271,30 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QTextEdit" name="textEdit">
+           <widget class="QPushButton" name="imageButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
               <height>50</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Image</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="textEdit">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>52</height>
              </size>
             </property>
            </widget>

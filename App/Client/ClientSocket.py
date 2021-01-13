@@ -8,6 +8,8 @@ class ClientSocket(qtc.QObject):
     port = 7777
     server_ip = "localhost"
     established = False
+    processing = False
+    image = qtc.QByteArray()
     login_outcome = qtc.pyqtSignal(str, list)
     register_outcome = qtc.pyqtSignal(str)
     add_contact_outcome = qtc.pyqtSignal(bool)
@@ -67,10 +69,33 @@ class ClientSocket(qtc.QObject):
         stream.writeQString(new_contact)
         self.socket.write(request)
         self.socket.flush()
+    
+    def sendImage(self, sender, reciever, image, time):
+        image_array = qtc.QByteArray()
+        buffer = qtc.QBuffer(image_array)
+        buffer.open(qtc.QIODevice.WriteOnly)
+        image.save(buffer, "JPG", quality=100)
+
+        request = qtc.QByteArray()
+        stream = qtc.QDataStream(request, qtc.QIODevice.WriteOnly)
+        stream.writeInt(4)
+        stream.writeInt(image_array.size())
+        stream.writeQString(sender)
+        stream.writeQString(reciever)
+        stream.writeQString(time)
+
+        self.socket.write(request)
+        self.socket.flush()
+        self.socket.write(image_array)
+        self.socket.flush()
 
     def processDatastream(self):
-        stream = qtc.QDataStream(self.socket)
-        case = stream.readInt()
+        case = -1
+        stream = -1
+
+        if not self.processing:
+            stream = qtc.QDataStream(self.socket)
+            case = stream.readInt()
 
         if case == 0:
             login_outcome = stream.readQString()
@@ -92,6 +117,27 @@ class ClientSocket(qtc.QObject):
         elif case == 3:
             list = stream.readQStringList()
             self.recieved_message.emit(list)
+
+        elif case == 4:
+            self.image_size = stream.readInt()
+            self.image_sender = stream.readQString()
+            self.image_reciever = stream.readQString()
+            self.image_time = stream.readQString()
+            self.processing = True
+
+        else:
+            self.image.append(self.socket.readAll())
+            
+            if self.image.size() == self.image_size:
+                image = qtg.QImage()
+                image.loadFromData(self.image)
+                self.recieved_message.emit([self.image_sender, self.image_reciever, image, self.image_time])
+                self.image_sender = ""
+                self.image_reciever = ""
+                self.image_time = ""
+                self.image_size = 0
+                self.image = qtc.QByteArray()
+                self.processing = False
 
     def disconnect(self):
         self.socket.disconnectFromHost()

@@ -4,6 +4,7 @@ from PyQt5 import QtGui as qtg
 from Client.GUI.MainWindow import Ui_MainWindow
 from Client.GUI.Chat import Ui_Chat
 from Client.GUI.Message import Ui_message
+from Client.GUI.Image import Ui_imageMessage
 from Client.Assets.Style import qss
 
 class MainWindow(qtw.QMainWindow):
@@ -52,12 +53,21 @@ class MainWindow(qtw.QMainWindow):
         self.ui.textEdit.setText("")
 
         self.message_list.append([self.username, self.message_partner, message, time])
+    
+    def sendImage(self, image, time):
+        self.ui.ChatScrollVbox.addWidget(ImageMessage(True, image, time))
+
+        self.message_list.append([self.username, self.message_partner, image, time])
 
     def recieveMessage(self, list):
         self.message_list.append([list[0], list[1], list[2], list[3]])
 
         if list[0] == self.message_partner or list[1] == self.message_partner:
-            self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
+            if type(list[2]) == str:
+                self.ui.ChatScrollVbox.addWidget(ChatMessage(False, list[2], list[3]))
+            else:
+                self.ui.ChatScrollVbox.addWidget(ImageMessage(False, list[2], list[3]))
+
         else:
             new_chat_boolean = True
 
@@ -65,7 +75,11 @@ class MainWindow(qtw.QMainWindow):
                 chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
 
                 if chat.ui.Name.text() == list[0]:
-                    chat.ui.LastMessage.setText(list[2])
+                    if type(list[2]) == str:
+                        chat.ui.LastMessage.setText(list[2])
+                    else:
+                        chat.ui.LastMessage.setText("Image")
+                        
                     self.ui.HomeScrollVbox.removeWidget(chat)
                     self.ui.HomeScrollVbox.insertWidget(0, chat)
 
@@ -145,7 +159,11 @@ class MainWindow(qtw.QMainWindow):
                 if message[0] == self.username:
                     own_message = True
 
-                chat = ChatMessage(own_message, message[2], message[3])
+                if type(message[2]) == str:
+                    chat = ChatMessage(own_message, message[2], message[3])
+                else:
+                    chat = ImageMessage(own_message, message[2], message[3])
+
                 self.ui.ChatScrollVbox.addWidget(chat)
                 self.ui.ChatScrollVbox.setAlignment(chat, qtc.Qt.AlignTop)
 
@@ -162,7 +180,10 @@ class ChatItem(qtw.QWidget):
         self.ui = Ui_Chat()
         self.ui.setupUi(self)
         self.ui.Name.setText(list[0])
-        self.ui.LastMessage.setText(list[1])
+        if type(list[1]) == str:
+            self.ui.LastMessage.setText(list[1])
+        else:
+            self.ui.LastMessage.setText("Image")
     
     def mouseReleaseEvent(self, event: qtg.QMouseEvent):
         self.clicked_signal.emit(self.ui.Name.text())
@@ -176,6 +197,26 @@ class ChatMessage(qtw.QWidget):
 
         if not sender:
             self.ui.messageLabel.setStyleSheet("background-color:purple;")
+        else:
+            self.ui.time.setAlignment(qtc.Qt.AlignRight)
 
         self.ui.messageLabel.setText(message)
+        self.ui.time.setText(time)
+
+class ImageMessage(qtw.QWidget):
+    def __init__(self, sender, image, time, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ui = Ui_imageMessage()
+        self.ui.setupUi(self)
+
+        aspect_ratio = image.width() / image.height()
+
+        image = image.scaled(400 * aspect_ratio, 400 * aspect_ratio)
+        qpixmap = qtg.QPixmap.fromImage(image)
+        
+        if sender:
+            self.ui.ImageLabel.setAlignment(qtc.Qt.AlignRight)
+            self.ui.time.setAlignment(qtc.Qt.AlignRight)
+
+        self.ui.ImageLabel.setPixmap(qpixmap)
         self.ui.time.setText(time)

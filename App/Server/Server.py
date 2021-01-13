@@ -9,26 +9,35 @@ class ServerSocket(qtn.QTcpServer):
     port = 7777
     threads = []
     send_message = qtc.pyqtSignal(list)
+    send_image = qtc.pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
         self.listen(qtn.QHostAddress.Any, self.port)
     
     def incomingConnection(self, descriptor):
+        print(descriptor)
         server_thread = ServerThread(descriptor)
         server_thread.moveToThread(server_thread)
         self.threads.append(server_thread)
         server_thread.start()
 
         self.send_message.connect(server_thread.sendMessage)
+        self.send_image.connect(server_thread.sendImage)
 
         server_thread.client_disconnected.connect(self.clientDisconnected)
         server_thread.message_recieved.connect(self.sendMessage)
+        server_thread.image_recieved.connect(self.sendImage)
 
     def sendMessage(self, list):
         for item in self.threads:
             if item.username == list[1]:
                 self.send_message.emit(list)
+
+    def sendImage(self, list):
+        for item in self.threads:
+            if item.username == list[1]:
+                self.send_image.emit(list)
 
     def clientDisconnected(self, client):
         for list in self.threads:
