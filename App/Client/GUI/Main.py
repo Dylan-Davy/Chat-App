@@ -4,6 +4,7 @@ from PyQt5 import QtGui as qtg
 from Client.GUI.MainWindow import Ui_MainWindow
 from Client.GUI.Chat import Ui_Chat
 from Client.GUI.Message import Ui_message
+from Client.GUI.Image import Ui_imageMessage
 from Client.Assets.Style import qss
 
 class MainWindow(qtw.QMainWindow):
@@ -178,4 +179,16 @@ class ChatMessage(qtw.QWidget):
             self.ui.messageLabel.setStyleSheet("background-color:purple;")
 
         self.ui.messageLabel.setText(message)
+        self.ui.time.setText(time)
+
+class ImageMessage(qtw.QWidget):
+    def __init__(self, sender, image, time, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ui = Ui_imageMessage()
+        self.ui.setupUi(self)
+
+        qimage = qtg.QImage.fromData(image)
+        qpixmap = qtg.QPixmap.fromImage(qimage)
+
+        self.ui.ImageLabel.setPixmap(qpixmap)
         self.ui.time.setText(time)

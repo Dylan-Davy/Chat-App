@@ -33,6 +33,13 @@ QWidget
 QFrame
 {
 	background-color: #ff9c2b;
+
+}
+
+QFrame > QLabel
+{
+	color: #000000;
+
 }
 
 

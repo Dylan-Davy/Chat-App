@@ -11,19 +11,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_message(object):
-    def setupUi(self, message):
-        message.setObjectName("message")
-        message.resize(200, 150)
+class Ui_imageMessage(object):
+    def setupUi(self, imageMessage):
+        imageMessage.setObjectName("imageMessage")
+        imageMessage.resize(200, 150)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(message.sizePolicy().hasHeightForWidth())
-        message.setSizePolicy(sizePolicy)
-        message.setMaximumSize(QtCore.QSize(16777215, 150))
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(message)
+        sizePolicy.setHeightForWidth(imageMessage.sizePolicy().hasHeightForWidth())
+        imageMessage.setSizePolicy(sizePolicy)
+        imageMessage.setMaximumSize(QtCore.QSize(16777215, 150))
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(imageMessage)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.scrollArea = QtWidgets.QScrollArea(message)
+        self.scrollArea = QtWidgets.QScrollArea(imageMessage)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -36,16 +36,16 @@ class Ui_message(object):
         self.verticalLayout.addWidget(self.ImageLabel)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_2.addWidget(self.scrollArea)
-        self.time = QtWidgets.QLabel(message)
+        self.time = QtWidgets.QLabel(imageMessage)
         self.time.setMaximumSize(QtCore.QSize(16777215, 15))
         self.time.setObjectName("time")
         self.verticalLayout_2.addWidget(self.time)
 
-        self.retranslateUi(message)
-        QtCore.QMetaObject.connectSlotsByName(message)
+        self.retranslateUi(imageMessage)
+        QtCore.QMetaObject.connectSlotsByName(imageMessage)
 
-    def retranslateUi(self, message):
+    def retranslateUi(self, imageMessage):
         _translate = QtCore.QCoreApplication.translate
-        message.setWindowTitle(_translate("message", "Form"))
-        self.ImageLabel.setText(_translate("message", "TextLabel"))
-        self.time.setText(_translate("message", "TextLabel"))
+        imageMessage.setWindowTitle(_translate("imageMessage", "Form"))
+        self.ImageLabel.setText(_translate("imageMessage", "TextLabel"))
+        self.time.setText(_translate("imageMessage", "TextLabel"))
