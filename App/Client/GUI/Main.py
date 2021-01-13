@@ -75,7 +75,11 @@ class MainWindow(qtw.QMainWindow):
                 chat = self.ui.HomeScrollVbox.itemAt(widget).widget()
 
                 if chat.ui.Name.text() == list[0]:
-                    chat.ui.LastMessage.setText(list[2])
+                    if type(list[2]) == str:
+                        chat.ui.LastMessage.setText(list[2])
+                    else:
+                        chat.ui.LastMessage.setText("Image")
+                        
                     self.ui.HomeScrollVbox.removeWidget(chat)
                     self.ui.HomeScrollVbox.insertWidget(0, chat)
 
