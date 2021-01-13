@@ -10,13 +10,14 @@ class ServerThread(qtc.QThread):
     client_disconnected = qtc.pyqtSignal(qtc.QObject)
     message_recieved = qtc.pyqtSignal(list)
     image_recieved = qtc.pyqtSignal(list)
-    processing = False
 
     def __init__(self, descriptor):
         super().__init__()
         self.descriptor = descriptor
 
     def run(self):
+        self.processing = False
+        self.image = qtc.QByteArray()
         self.connection = qtn.QTcpSocket()
         self.connection.setSocketDescriptor(self.descriptor)
 
@@ -46,7 +47,6 @@ class ServerThread(qtc.QThread):
         if case == 0:
             username = stream.readQString()
             password = stream.readQString()
-            self.image = qtc.QByteArray()
 
             self.cur.execute(f"SELECT COUNT(username) FROM \"Users\" WHERE username = '{username}' AND password = '{password}'")
 
