@@ -53,6 +53,9 @@ class MainWindow(qtw.QMainWindow):
         self.ui.textEdit.setText("")
 
         self.message_list.append([self.username, self.message_partner, message, time])
+    
+    def sendImage(self, image, time):
+        self.ui.ChatScrollVbox.addWidget(ImageMessage(True, image, time))
 
     def recieveMessage(self, list):
         self.message_list.append([list[0], list[1], list[2], list[3]])
@@ -187,8 +190,13 @@ class ImageMessage(qtw.QWidget):
         self.ui = Ui_imageMessage()
         self.ui.setupUi(self)
 
-        qimage = qtg.QImage.fromData(image)
-        qpixmap = qtg.QPixmap.fromImage(qimage)
+        aspect_ratio = image.width() / image.height()
+
+        image = image.scaled(400 * aspect_ratio, 400 * aspect_ratio)
+        qpixmap = qtg.QPixmap.fromImage(image)
+        
+        if sender:
+            self.ui.ImageLabel.setAlignment(qtc.Qt.AlignRight)
 
         self.ui.ImageLabel.setPixmap(qpixmap)
         self.ui.time.setText(time)

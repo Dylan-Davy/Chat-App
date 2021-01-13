@@ -14,6 +14,7 @@ class Client(qtc.QObject):
     logout_signal = qtc.pyqtSignal()
     add_contact = qtc.pyqtSignal(str)
     send_message = qtc.pyqtSignal(str, str, str, str)
+    send_image = qtc.pyqtSignal(str, str, qtg.QImage, str)
 
     def __init__(self):
         super().__init__()
@@ -40,6 +41,7 @@ class Client(qtc.QObject):
         w.ui.newMessageButton.clicked.connect(self.addContact)
         w.ui.actionBack.triggered.connect(self.backButton)
         w.ui.sendButton.clicked.connect(self.sendMessage)
+        w.ui.imageButton.clicked.connect(self.chooseImage)
         w.ui.ChatScroll.verticalScrollBar().rangeChanged.connect(lambda : w.ui.ChatScroll.verticalScrollBar().setValue(w.ui.ChatScroll.verticalScrollBar().maximum()))
 
     def backButton(self):
@@ -63,6 +65,19 @@ class Client(qtc.QObject):
             self.send_message.emit(self.username, w.message_partner, message, time)
             
             w.sendMessage(message, time)
+
+    def chooseImage(self):
+        image_name = qtw.QFileDialog.getOpenFileName(w, w.tr("Select Image"), filter = 'Image Files (*.png *.jpg *.bmp)')[0]
+        
+        if len(image_name) > 0:
+            image = qtg.QImage()
+            qtg.QImage.load(image, image_name)
+
+            time = str(datetime.now())
+            
+            self.send_image.emit(w.username, w.message_partner, image, time)
+
+            w.sendImage(image, time)
 
     def recieveMessage(self, list):
         w.recieveMessage(list)
