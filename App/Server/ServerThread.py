@@ -11,7 +11,6 @@ class ServerThread(qtc.QThread):
     message_recieved = qtc.pyqtSignal(list)
     image_recieved = qtc.pyqtSignal(list)
     processing = False
-    image = qtc.QByteArray()
 
     def __init__(self, descriptor):
         super().__init__()
@@ -47,6 +46,7 @@ class ServerThread(qtc.QThread):
         if case == 0:
             username = stream.readQString()
             password = stream.readQString()
+            self.image = qtc.QByteArray()
 
             self.cur.execute(f"SELECT COUNT(username) FROM \"Users\" WHERE username = '{username}' AND password = '{password}'")
 
@@ -125,15 +125,15 @@ class ServerThread(qtc.QThread):
             self.connection.write(request)
 
         elif case == 4:
+            self.processing = True
             self.image_size = stream.readInt()
             self.image_sender = stream.readQString()
             self.image_reciever = stream.readQString()
             self.image_time = stream.readQString()
-            self.processing = True
 
         else:
             self.image.append(self.connection.readAll())
-            
+
             if self.image.size() == self.image_size:
                 self.image_recieved.emit([self.image_sender, self.image_reciever, self.image, self.image_time])
                 self.image_sender = ""
@@ -142,7 +142,6 @@ class ServerThread(qtc.QThread):
                 self.image_size = 0
                 self.image = qtc.QByteArray()
                 self.processing = False
-                print("image recieved")
 
         self.database.commit()
         self.connection.flush()

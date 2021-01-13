@@ -88,7 +88,6 @@ class ClientSocket(qtc.QObject):
         self.socket.flush()
         self.socket.write(image_array)
         self.socket.flush()
-        print("image sent")
 
     def processDatastream(self):
         case = -1
@@ -139,7 +138,6 @@ class ClientSocket(qtc.QObject):
                 self.image_size = 0
                 self.image = qtc.QByteArray()
                 self.processing = False
-                print("image processed")
 
     def disconnect(self):
         self.socket.disconnectFromHost()

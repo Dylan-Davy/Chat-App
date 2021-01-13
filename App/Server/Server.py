@@ -16,6 +16,7 @@ class ServerSocket(qtn.QTcpServer):
         self.listen(qtn.QHostAddress.Any, self.port)
     
     def incomingConnection(self, descriptor):
+        print(descriptor)
         server_thread = ServerThread(descriptor)
         server_thread.moveToThread(server_thread)
         self.threads.append(server_thread)
