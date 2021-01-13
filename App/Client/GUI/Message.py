@@ -24,7 +24,7 @@ class Ui_message(object):
         self.gridLayout = QtWidgets.QGridLayout(message)
         self.gridLayout.setObjectName("gridLayout")
         self.time = QtWidgets.QLabel(message)
-        self.time.setMaximumSize(QtCore.QSize(16777215, 15))
+        self.time.setMaximumSize(QtCore.QSize(16777215, 25))
         self.time.setObjectName("time")
         self.gridLayout.addWidget(self.time, 1, 0, 1, 1)
         self.messageLabel = QtWidgets.QTextBrowser(message)

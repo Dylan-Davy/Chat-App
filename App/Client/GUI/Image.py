@@ -32,7 +32,7 @@ class Ui_imageMessage(object):
         self.ImageLabel.setObjectName("ImageLabel")
         self.verticalLayout_2.addWidget(self.ImageLabel)
         self.time = QtWidgets.QLabel(imageMessage)
-        self.time.setMaximumSize(QtCore.QSize(16777215, 15))
+        self.time.setMaximumSize(QtCore.QSize(16777215, 25))
         self.time.setObjectName("time")
         self.verticalLayout_2.addWidget(self.time)
 

@@ -134,11 +134,12 @@ class ServerThread(qtc.QThread):
             self.image.append(self.connection.readAll())
             
             if self.image.size() == self.image_size:
-                my_image = qtg.QImage()
-
+                
                 self.image_sender = ""
                 self.image_reciever = ""
                 self.image_time = ""
+                self.image_size = 0
+                self.image = qtc.QByteArray()
                 self.processing = False
 
         self.database.commit()
