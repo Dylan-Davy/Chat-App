@@ -103,7 +103,7 @@ class Client(qtc.QObject):
 
     def register(self):
         self.register_signal.emit(w.ui.UsernameEntry.text(), w.ui.PasswordEntry.text(), 1)
-        self.statusBar().showMessage(f"Attempting to register as {self.ui.UsernameEntry.text()}")
+        w.statusBar().showMessage(f"Attempting to register as {w.ui.UsernameEntry.text()}")
 
     def logout(self):
         self.logout_signal.emit()
