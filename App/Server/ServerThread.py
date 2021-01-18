@@ -28,7 +28,7 @@ class ServerThread(qtc.QThread):
             host = "localhost",
             database = "Chat",
             user = "postgres",
-            password = "9653",
+            password = "password",
             port = "5432"
         )
 

@@ -33,11 +33,13 @@ class ServerSocket(qtn.QTcpServer):
         for item in self.threads:
             if item.username == list[1]:
                 self.send_message.emit(list)
+                break
 
     def sendImage(self, list):
         for item in self.threads:
             if item.username == list[1]:
                 self.send_image.emit(list)
+                break
 
     def clientDisconnected(self, client):
         for list in self.threads:
